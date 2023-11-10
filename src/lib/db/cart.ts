@@ -17,11 +17,11 @@ export type ShoppingCart = CartWithProducts & {
 
 export const getCart = async (): Promise<ShoppingCart | null> => {
   const localCartId = cookies().get("localCartId")?.value;
-  const cart = localCartId
-    ? await prisma.cart.findUnique({
-        where: { id: localCartId },
-        include: { CartItem: { include: { product: true } } },
-      })
+  const cart = localCartId ? 
+    await prisma.cart.findUnique({
+      where: { id: localCartId },
+      include: { CartItem: { include: { product: true } } },
+    }) 
     : null;
 
   if (!cart) {
