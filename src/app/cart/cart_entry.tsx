@@ -21,7 +21,7 @@ const CartEntry = ({
 
   for (let i = 1; i <= 99; i++) {
     quantityOptions.push(
-      <option key={i} value={i}>
+      <option key={i} value={i}>  
         {i}
       </option>
     );

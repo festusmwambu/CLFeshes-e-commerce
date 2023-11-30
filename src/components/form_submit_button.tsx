@@ -1,19 +1,31 @@
 "use client";
 
-import { ComponentProps, ReactNode } from "react";
+import { MouseEventHandler, ReactNode } from "react";
+import { useForm } from "react-hook-form";
 
 type FormSubmitButtonProps = {
   children: ReactNode;
   className?: string;
-} & ComponentProps<"button">;
+  type?: "button" | "submit" | "reset";
+  onclick?: MouseEventHandler<HTMLButtonElement>;
+};
 
 const FormSubmitButton = ({
   children,
   className,
-  ...props
+  type = "submit",
+  onclick,
 }: FormSubmitButtonProps) => {
+  const { formState } = useForm();
+
   return (
-    <button {...props} type="submit" className={`btn btn-primary ${className}`}>
+    <button
+      type={type}
+      className={`btn btn-primary ${className || ""}`}
+      disabled={formState.isSubmitting}
+      onClick={onclick}
+    >
+      {formState.isSubmitting && <span className="loading loading-spinner" />}
       {children}
     </button>
   );

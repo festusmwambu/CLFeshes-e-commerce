@@ -1,22 +1,30 @@
-import React from "react";
+import React, { FormEvent } from "react";
 import prisma from "@/lib/db/prisma";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 
 import FormSubmitButton from "@/components/form_submit_button";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../api/auth/[...nextauth]/route";
 
 export const metadata = {
   title: "Add Product - CLFeshes",
 };
 
-async function addProduct(formData: FormData) {
+const addProduct = async (formData: FormData) => {
   "use server";
+
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    redirect("/api/auth/signin?callbackUrl=/add-product");
+  }
 
   const name = formData.get("name")?.toString();
   const description = formData.get("description")?.toString();
-  const imageUrl = formData.get("imageUrl")?.toString();
+  const imageUrl = formData.get("imageUrl")?.toString() || ""; // Provide a default value
   const price = Number(formData.get("price") || 0);
 
-  if (!name || !description || !imageUrl || !price) {
+  if (!name || !description || imageUrl || !price) {
     throw new Error("Missing required fields");
   }
 
@@ -25,9 +33,15 @@ async function addProduct(formData: FormData) {
   });
 
   redirect("/");
-}
+};
 
-const AddProductPage = () => {
+const AddProductPage = async () => {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    redirect("/api/auth/signin?callbackUrl=/add-product");
+  }
+
   return (
     <div>
       <h1 className="text-lg mb-3 font-bold">Add Product</h1>

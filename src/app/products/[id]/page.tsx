@@ -1,11 +1,11 @@
+import { cache } from "react";
 import prisma from "@/lib/db/prisma";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import PriceTag from "@/components/price_tag";
-import { cache } from "react";
-import { Metadata } from "next";
 import AddToCartButton from "./add_to_cart_button";
 import incrementProductQuantity from "./increment_product_quantity";
+import { Metadata } from "next";
 
 interface ProductPageProps {
   params: {
@@ -21,9 +21,9 @@ const getProduct = cache(async (id: string) => {
 });
 
 export const generateMetadata = async ({
-  params: { id },
+  params,
 }: ProductPageProps): Promise<Metadata> => {
-  const product = await getProduct(id);
+  const product = await getProduct(params.id);
 
   return {
     title: product.name + " - CLFeshes",
@@ -40,7 +40,6 @@ export const generateMetadata = async ({
 
 const ProductPage = async ({ params: { id } }: ProductPageProps) => {
   const product = await getProduct(id);
-  if (!product) notFound();
 
   return (
     <div className="flex flex-col lg:flex-row gap-4 lg:items-center">
